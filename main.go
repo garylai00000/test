@@ -62,13 +62,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				bot.SendText([]string{os.Getenv("mymid")}, info[0].DisplayName+" :\n"+text.Text) // sent to tester
 				db.Exec("INSERT INTO sql6131889.text (MID, Text)VALUES (?, ?)", info[0].MID, text.Text)
 				var S int
-				db.QueryRow("SELECT Status FROM sql6131889.User WHERE MID = ?", content.From).Scan(&S) // get user status
+				db.QueryRow("SELECT UserStatus FROM sql6131889.User WHERE MID = ?", content.From).Scan(&S) // get user status
 				if S == 10{
 					if text.Text == "!joinchatroom" { // cheak if enter commands
-						db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 11, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 11, content.From)
 						bot.SendText([]string{content.From}, "Please enter chatroom number:")
 					}else if text.Text == "!createchatroom" {
-						db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 12, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 12, content.From)
 						bot.SendText([]string{content.From}, "Please enter chatroom number:")
 					}else{
 						bot.SendText([]string{content.From}, "Hi,"+info[0].DisplayName+"!\n"+"These are my commands:")
@@ -79,15 +79,15 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					db.QueryRow("SELECT RoomName FROM sql6131889.Room WHERE RoomName = ?", text.Text).Scan(&rn)
 					if rn != ""{
 						bot.SendText([]string{content.From}, "Chatroom number repeated")
-						db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 10, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 10, content.From)
 					}else{
 						db.Exec("INSERT INTO sql6131889.Room (RoomName, RoomPass) VALUES (?, ?)", text.Text, content.From)
 						bot.SendText([]string{content.From}, "Please enter chatroom password:")
-						db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 13, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 13, content.From)
 					}
 				}else if S == 13{
 					db.Exec("UPDATE sql6131889.Room SET roompw = ? WHERE roompw = ?", text.Text, content.From)
-					db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 10, content.From)
+					db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 10, content.From)
 					var rn string
 					db.QueryRow("SELECT RoomName FROM sql6131889.Room WHERE RoomPass = ?", text.Text).Scan(&rn)
 					bot.SendText([]string{content.From}, "Room: "+rn+"\ncreated")
@@ -96,7 +96,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					db.QueryRow("SELECT RoomPass FROM sql6131889.User WHERE RoomName = ?", text.Text).Scan(&pw)
 					if pw == ""{
 						bot.SendText([]string{content.From}, "Chatroom : "+text.Text+"\ndoes not exist")
-						db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 10, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 10, content.From)
 					}else{
 						db.Exec("INSERT INTO sql6131889.User (UserStatus, UserRoom)VALUES (?, ?)", 14, text.Text)
 						bot.SendText([]string{content.From}, "Please enter chatroom password:")
@@ -108,21 +108,21 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					db.QueryRow("SELECT RoomPass FROM sql6131889.Room WHERE RoomName = ?", rn).Scan(&rp)
 					if text.Text == rp{ // correct password
 						bot.SendText([]string{content.From}, "Entered chatroom:\n"+rn)
-						db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 1000, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 1000, content.From)
 					}else{
 						bot.SendText([]string{content.From}, "Wrong password")
-						db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 10, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 10, content.From)
 					}
 				}else if S == 1000{
 					if text.Text == "!leavechatroom"{
 						var R string
 						db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?", content.From).Scan(&R)
 						bot.SendText([]string{content.From}, "Left chatroom:\n"+R)
-						db.Exec("UPDATE sql6131889.User SET Status = ? WHERE MID = ?", 10, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 10, content.From)
 					}else{
 						var R string
 						db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?", content.From).Scan(&R)
-						row,_ := db.Query("SELECT MID FROM sql6131889.User WHERE roomnum = ? AND Status = ?", R, 1000)
+						row,_ := db.Query("SELECT MID FROM sql6131889.User WHERE roomnum = ? AND UserStatus = ?", R, 1000)
 						for row.Next() {
 							var mid1 string
 							row.Scan(&mid1)
