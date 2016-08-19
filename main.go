@@ -60,8 +60,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			if content.ContentType == linebot.ContentTypeText{ // content type : text
 				text, _ := content.TextContent()
 				bot.SendText([]string{os.Getenv("mymid")}, info[0].DisplayName+" :\n"+text.Text) // sent to tester
-				db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
-				db.Exec("INSERT INTO sql6131889.text VALUES (?, ?)", info[0].MID, text.Text)
+				db.Exec("INSERT INTO sql6131889.text (MID, Text)VALUES (?, ?)", info[0].MID, text.Text)
 				var S int
 				db.QueryRow("SELECT Status FROM sql6131889.User WHERE MID = ?", content.From).Scan(&S) // get user status
 				if S == 10{
