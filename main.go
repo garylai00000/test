@@ -50,11 +50,11 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 		prof,_ := bot.GetUserProfile([]string{content.From})
 		info := prof.Contacts
-		if content != nil { // put user profile into database
+		if content != nil {
 			var M string
 			db.QueryRow("SELECT MID FROM sql6131889.User WHERE MID = ?", content.From).Scan(&M)
 			if M == ""{ // new user
-			bot.SendText([]string{content.From}, "Welcome!")
+			bot.SendText([]string{content.From}, "Welcome!") // put user profile into database
 			db.Exec("INSERT INTO sql6131889.User (MID, UserName, UserStatus, UserTitle, UserPicture) VALUES (?, ?, ?, ?, ?)", info[0].MID, info[0].DisplayName, 10, "菜鳥", info[0].PictureURL)
 			}
 			if content.ContentType == linebot.ContentTypeText{ // content type : text
@@ -133,12 +133,12 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 				}
-			}
-		}else if content.ContentType == linebot.ContentTypeSticker{ // content type : sticker
+			}else if content.ContentType == linebot.ContentTypeSticker{ // content type : sticker
 			sticker, _ := content.StickerContent()
 			bot.SendSticker([]string{content.From}, 7, 1, 100)
 			bot.SendText([]string{os.Getenv("mymid")}, info[0].DisplayName+" sent a sticker") // sent to tester
 			db.Exec("INSERT INTO sql6131889.Stiker (MID, PackageID, StickerID, Version)VALUES (?, ?, ?, ?)", info[0].MID, sticker.PackageID, sticker.ID, sticker.Version)
+			}
 		}
 	}
 }
