@@ -98,7 +98,8 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						bot.SendText([]string{content.From}, "Chatroom : "+text.Text+"\ndoes not exist")
 						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 10, content.From)
 					}else{
-						db.Exec("INSERT INTO sql6131889.User (UserStatus, UserRoom)VALUES (?, ?)", 14, text.Text)
+						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 14, content.From)
+						db.Exec("UPDATE sql6131889.User SET UserRoom = ? WHERE MID = ?", text.Text, content.From)
 						bot.SendText([]string{content.From}, "Please enter chatroom password:")
 					}
 				}else if S == 14{
