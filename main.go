@@ -123,7 +123,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					}else{
 						var R string
 						db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?", content.From).Scan(&R)
-						row,_ := db.Query("SELECT MID FROM sql6131889.User WHERE roomnum = ? AND UserStatus = ?", R, 1000)
+						row,_ := db.Query("SELECT MID FROM sql6131889.User WHERE UserRoom = ? AND UserStatus = ?", R, 1000)
 						for row.Next() {
 							var mid1 string
 							row.Scan(&mid1)
