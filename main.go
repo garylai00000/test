@@ -86,7 +86,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 13, content.From)
 					}
 				}else if S == 13{
-					db.Exec("UPDATE sql6131889.Room SET roompw = ? WHERE roompw = ?", text.Text, content.From)
+					db.Exec("UPDATE sql6131889.Room SET RoomPass = ? WHERE RoomPass = ?", text.Text, content.From)
 					db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 10, content.From)
 					var rn string
 					db.QueryRow("SELECT RoomName FROM sql6131889.Room WHERE RoomPass = ?", text.Text).Scan(&rn)
