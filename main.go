@@ -93,7 +93,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 					bot.SendText([]string{content.From}, "Room: "+rn+"\ncreated")
 				}else if S == 11{
 					var pw string
-					db.QueryRow("SELECT RoomPass FROM sql6131889.User WHERE RoomName = ?", text.Text).Scan(&pw)
+					db.QueryRow("SELECT RoomPass FROM sql6131889.Room WHERE RoomName = ?", text.Text).Scan(&pw)
 					if pw == ""{
 						bot.SendText([]string{content.From}, "Chatroom : "+text.Text+"\ndoes not exist")
 						db.Exec("UPDATE sql6131889.User SET UserStatus = ? WHERE MID = ?", 10, content.From)
